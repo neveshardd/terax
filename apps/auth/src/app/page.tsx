@@ -12,7 +12,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!loading && !user) {
-      // redireciona para login central com redirect
       window.location.href = `/login?redirect=${encodeURIComponent(window.location.href)}`;
     }
   }, [user, loading]);

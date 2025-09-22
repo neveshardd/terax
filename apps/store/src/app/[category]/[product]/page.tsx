@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
-import { useCartStore } from "@/app/cart/cart";
+import { useCartStore } from "@/app/cart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingCart, Star, Truck, BadgeCheck, Zap } from "lucide-react";

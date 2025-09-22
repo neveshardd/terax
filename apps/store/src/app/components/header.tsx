@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Menu, ShoppingBasket, StoreIcon, X, LogOut } from "lucide-react";
 import gsap from "gsap";
-import { useCartStore } from "@/app/cart/cart";
+import { useCartStore } from "@/app/cart";
 import { useAuth } from "@/app/hooks/useAuth";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

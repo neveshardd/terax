@@ -4,7 +4,6 @@ import "./globals.css";
 import { Providers } from "./providers";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`} cz-shortcut-listen="true" suppressHydrationWarning>
-        <ThemeProvider attribute={"class"} defaultTheme="system" enableSystem>
           <Providers>
             <Header />
             <main className="flex-1 mt-18">
@@ -34,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
             <Footer />
           </Providers >
-        </ThemeProvider>
       </body>
     </html>
   );

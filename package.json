@@ -16,12 +16,16 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "npm@11.6.0",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
+  "packageManager": "npm@11.6.0",
   "dependencies": {
     "fastify": "^5.6.0"
+  },
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   }
 }
