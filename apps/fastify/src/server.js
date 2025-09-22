@@ -14,8 +14,8 @@ app.use(express.json())
 
 app.use(cors({
     origin: [
-        'http://localhost:3000',
-        'http://localhost:3001'
+        `${process.env.PUBLIC_AUTH_URL}` || 'http://localhost:3000',
+        `${process.env.PUBLIC_STORE_URL}` || 'http://localhost:3001'
     ],
     credentials: true,
     methods: ['GET', 'POST']
