@@ -1,0 +1,187 @@
+"use client";
+
+import { useCartStore } from "@/app/cart/cart";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Trash2, ShoppingBag, Minus, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+interface Bonus {
+  id: string;
+  label: string;
+  condition: (total: number, timeLeft: number) => boolean;
+  amount: (total: number) => number;
+  color?: string;
+}
+
+export default function MiniCart() {
+  const items = useCartStore((state) => state.items);
+  const total = useCartStore((state) => state.total());
+  const removeItem = useCartStore((state) => state.removeItem);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const router = useRouter();
+
+  const [timeLeft, setTimeLeft] = useState(600);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const itemCount = items.reduce((acc, item) => acc + item.quantidade, 0);
+
+  const bonuses: Bonus[] = [
+    {
+      id: "bonus5",
+      label: "+5% de desconto por compras acima de R$100",
+      condition: (t) => t >= 100,
+      amount: (t) => t * 0.05,
+      color: "text-yellow-600",
+    },
+  ];
+
+  const appliedBonuses = bonuses.filter((b) => b.condition(total, timeLeft));
+  const totalBonus = appliedBonuses.reduce((acc, b) => acc + b.amount(total), 0);
+  const totalWithBonus = total - totalBonus;
+
+  const bonusThreshold = 100;
+  const missing = Math.max(bonusThreshold - total, 0);
+  const progress = Math.min((total / bonusThreshold) * 100, 100);
+
+  return (
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950 py-8 sm:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <Card className="rounded-2xl shadow-md border border-yellow-500/40 bg-white dark:bg-neutral-900 backdrop-blur-md">
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-neutral-900 dark:text-white">
+              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
+              {items.length > 0 ? `Seu Carrinho (${itemCount} itens)` : "Seu Carrinho"}
+            </CardTitle>
+            {items.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={clearCart}
+                className="rounded-full cursor-pointer shadow-sm hover:scale-105 transition bg-red-500 hover:bg-red-600"
+              >
+                Esvaziar
+              </Button>
+            )}
+          </CardHeader>
+
+          <CardContent>
+            {items.length === 0 ? (
+              <p className="text-neutral-500 dark:text-neutral-400 text-center py-16 text-base sm:text-lg">
+                Seu carrinho está vazio 🛒
+                <br />
+                <span className="text-yellow-600 font-semibold block mt-2">
+                  Garanta já seus kits e vantagens exclusivas no servidor!
+                </span>
+              </p>
+            ) : (
+              <>
+                <ul className="divide-y divide-neutral-200 dark:divide-neutral-700">
+                  {items.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-4"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-neutral-900 dark:text-white">{item.nome}</p>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                          R$ {item.preco.toFixed(2)} cada
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-4">
+                        <div className="flex items-center border border-yellow-500/40 rounded-lg overflow-hidden">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => updateQuantity(item.id, Math.max(item.quantidade - 1, 1))}
+                            disabled={item.quantidade <= 1}
+                            className="cursor-pointer"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </Button>
+                          <span className="px-3 font-medium">{item.quantidade}</span>
+                          <Button variant="ghost" size="icon" className="cursor-pointer" onClick={() => updateQuantity(item.id, item.quantidade + 1)}>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+
+                        <span className="font-bold text-lg text-yellow-600 min-w-[80px] text-right">
+                          R$ {(item.preco * item.quantidade).toFixed(2)}
+                        </span>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeItem(item.id)}
+                          className="text-red-500 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Resumo e bônus */}
+                <div className="mt-6 border-t border-yellow-500/30 pt-4 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
+                    <span className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">Total:</span>
+                    <span className="text-xl sm:text-2xl font-bold text-yellow-600">
+                      R$ {totalWithBonus.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2 overflow-hidden">
+                    <div className="h-2 bg-yellow-500 transition-all" style={{ width: `${progress}%` }} />
+                  </div>
+
+                  {/* Mensagens de bônus */}
+                  {appliedBonuses.map((b) => (
+                    <p key={b.id} className={`text-sm mt-2 font-semibold ${b.color || "text-yellow-600"}`}>
+                      🎉 {b.label} (-{b.amount(total).toFixed(2)} R$)
+                    </p>
+                  ))}
+
+                  {!appliedBonuses.find((b) => b.id === "bonus5") && missing > 0 && (
+                    <p className="text-sm mt-2 text-neutral-600 dark:text-neutral-400">
+                      💡 Faltam <span className="font-semibold text-yellow-600">R$ {missing.toFixed(2)}</span> para ganhar <strong>+5% de desconto</strong>!
+                    </p>
+                  )}
+
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                    Seus itens serão entregues automaticamente no servidor assim que o pagamento for confirmado.
+                  </p>
+                </div>
+
+                {/* CTA */}
+                <div className="mt-6 flex flex-col sm:flex-row gap-4">
+                  <Button
+                    onClick={() => router.push("/cart/checkout")}
+                    className="flex-1 cursor-pointer rounded-xl shadow-md bg-gradient-to-r from-yellow-400 to-yellow-500 text-black hover:scale-[1.02] transition-transform text-base sm:text-lg font-bold"
+                  >
+                    Finalizar Compra 🚀
+                  </Button>
+                  <Button
+                    onClick={() => router.push("/")}
+                    variant="outline"
+                    className="flex-1 cursor-pointer rounded-xl shadow-md border-yellow-500 text-yellow-600 hover:bg-yellow-500/10 transition-transform"
+                  >
+                    Continuar Comprando
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
+}
