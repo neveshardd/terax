@@ -90,18 +90,10 @@ routers.post('/login', async (req, res) => {
 
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             maxAge: 15 * 60 * 1000
         })
-
-        // res.cookie("access_token", token, {
-        //     httpOnly: true,
-        //     secure: true,             // precisa HTTPS
-        //     sameSite: "none",         // para compartilhar entre subdomínios
-        //     domain: ".terax.world",// habilita em todos os subdomínios
-        //     maxAge: 15 * 60 * 1000
-        // });
 
         return res.status(200).json({
             message: userMessages.loggedIn,
