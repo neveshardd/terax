@@ -50,7 +50,7 @@ export default function Header() {
         credentials: 'include'
       });
       setUser(null)
-      window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
+      //window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
     } catch (err) {
       console.error("Erro ao fazer logout:", err);
     }
