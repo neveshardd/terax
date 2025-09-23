@@ -12,13 +12,17 @@ app.use(cookieParser())
 
 app.use(express.json())
 
+const allowedOrigins = [
+  process.env.PUBLIC_AUTH_URL,
+  process.env.PUBLIC_STORE_URL,
+  'http://localhost:3000',
+  'http://localhost:3001'
+].filter(Boolean)
+
 app.use(cors({
-    origin: [
-        `${process.env.PUBLIC_AUTH_URL}` || 'http://localhost:3000',
-        `${process.env.PUBLIC_STORE_URL}` || 'http://localhost:3001'
-    ],
+    origin: allowedOrigins,
     credentials: true,
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST', 'OPTIONS']
 }))
 
 app.use('/', rootRoute)
