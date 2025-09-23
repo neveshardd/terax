@@ -112,8 +112,8 @@ routers.post('/login', async (req, res) => {
 routers.get('/logout', async (req, res) => {
     res.clearCookie("access_token", {
         httpOnly: true,
-        secure: false, 
-        sameSite: "lax",
+        secure: true, 
+        sameSite: "none",
         path: "/",   
     });
     res.status(200).json({ message: "Logout realizado com sucesso!" });

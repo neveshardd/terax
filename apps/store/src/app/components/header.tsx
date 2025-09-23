@@ -16,7 +16,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   const cartItems = useCartStore((state) => state.items);
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
@@ -49,6 +49,7 @@ export default function Header() {
         method: "GET",
         credentials: 'include'
       });
+      setUser(null)
       window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
     } catch (err) {
       console.error("Erro ao fazer logout:", err);
