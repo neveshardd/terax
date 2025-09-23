@@ -183,43 +183,85 @@ export default function Header() {
 
           {/* Botões fixos no rodapé */}
           <div className="mt-auto flex flex-col gap-4 pb-6">
-            {/* Carrinho */}
-            <Link
-              href="/cart"
-              className="relative flex items-center justify-center w-full rounded-lg 
-              border border-yellow-500 px-4 py-3 text-yellow-500 font-medium 
-              transition-colors hover:bg-yellow-500/10"
-              onClick={handleClose}
-            >
-              <ShoppingBasket size={22} />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center 
-                justify-center rounded-full bg-yellow-500 text-xs font-bold text-black shadow">
-                  {totalItems}
-                </span>
-              )}
-              <span className="ml-2">Carrinho</span>
-            </Link>
+            {user ? (
+              <>
+                {/* Avatar + nome/email no mobile */}
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-yellow-500/30 bg-yellow-500/5">
+                  <Avatar>
+                    <AvatarFallback>
+                      {user.name ? user.name[0] : user.email[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col text-sm">
+                    <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                      {user.name || "Usuário"}
+                    </span>
+                    <span className="text-neutral-500 dark:text-neutral-400 text-xs truncate max-w-[160px]">
+                      {user.email}
+                    </span>
+                  </div>
+                </div>
 
-            {/* Entrar */}
-            <Link
-              href="/login"
-              className="block w-full rounded-lg border border-yellow-500 px-4 py-3 
-              text-center text-yellow-500 font-bold transition-colors hover:bg-yellow-500/10"
-              onClick={handleClose}
-            >
-              Entrar
-            </Link>
+                {/* Logout */}
+                <button
+                  onClick={async () => {
+                    try {
+                      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/logout`, {
+                        method: "GET",
+                        credentials: "include",
+                      });
+                      window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
+                    } catch (err) {
+                      console.error("Erro ao fazer logout:", err);
+                    }
+                  }}
+                  className="w-full rounded-lg border border-yellow-500 px-4 py-3 
+                   text-yellow-500 font-bold transition-colors hover:bg-yellow-500/10"
+                >
+                  Sair
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Carrinho */}
+                <Link
+                  href="/cart"
+                  className="relative flex items-center justify-center w-full rounded-lg 
+                   border border-yellow-500 px-4 py-3 text-yellow-500 font-medium 
+                   transition-colors hover:bg-yellow-500/10"
+                  onClick={handleClose}
+                >
+                  <ShoppingBasket size={22} />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center 
+                           justify-center rounded-full bg-yellow-500 text-xs font-bold text-black shadow">
+                      {totalItems}
+                    </span>
+                  )}
+                  <span className="ml-2">Carrinho</span>
+                </Link>
 
-            {/* Cadastro */}
-            <Link
-              href="/register"
-              className="block w-full rounded-lg bg-yellow-500 px-4 py-3 text-center 
-              text-black font-bold transition-transform hover:scale-95"
-              onClick={handleClose}
-            >
-              Cadastro
-            </Link>
+                {/* Entrar */}
+                <Link
+                  href="/login"
+                  className="block w-full rounded-lg border border-yellow-500 px-4 py-3 
+                   text-center text-yellow-500 font-bold transition-colors hover:bg-yellow-500/10"
+                  onClick={handleClose}
+                >
+                  Entrar
+                </Link>
+
+                {/* Cadastro */}
+                <Link
+                  href="/register"
+                  className="block w-full rounded-lg bg-yellow-500 px-4 py-3 text-center 
+                   text-black font-bold transition-transform hover:scale-95"
+                  onClick={handleClose}
+                >
+                  Cadastro
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
