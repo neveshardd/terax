@@ -114,7 +114,7 @@ export default function Footer() {
             <li className="flex justify-start items-center gap-2">
               <Github className="w-4 h-4" />
               <a
-                href="https://github.com/neveshardd"
+                href="https://github.com/neveshardd/terax"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-neutral-900 dark:hover:text-white transition-colors"

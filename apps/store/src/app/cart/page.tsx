@@ -3,47 +3,86 @@
 import { useCartStore } from "@/app/cart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, ShoppingBag, Minus, Plus } from "lucide-react";
+import { Trash2, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Bonus {
   id: string;
   label: string;
-  condition: (total: number, timeLeft: number) => boolean;
+  condition: (total: number) => boolean;
   amount: (total: number) => number;
   color?: string;
+  durationMinutes?: number; // duração em minutos
 }
+
+const productNames: Record<string, string> = {
+  pro: "VIP Pro",
+  elite: "VIP Elite",
+  mestre: "VIP Mestre",
+  booster1: "Booster 1h",
+  booster2: "Booster 2h",
+  booster3: "Booster 3h",
+  cash50: "Cash 50",
+  cash100: "Cash 100",
+  cash500: "Cash 500",
+  coin50: "Coins 50",
+  coin100: "Coins 100",
+  coin500: "Coins 500",
+  unban: "Unban",
+  unmute: "Unmute",
+  rename: "Rename",
+};
 
 export default function MiniCart() {
   const items = useCartStore((state) => state.items);
   const total = useCartStore((state) => state.total());
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
   const router = useRouter();
 
-  const [timeLeft, setTimeLeft] = useState(600);
-
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  const itemCount = items.reduce((acc, item) => acc + item.quantidade, 0);
-
+  // --- Definindo os bônus ---
   const bonuses: Bonus[] = [
     {
       id: "bonus5",
       label: "+5% de desconto por compras acima de R$100",
-      condition: (t) => t >= 100,
+      condition: (t) => t >= 100 && bonusTimeLeft["bonus5"] > 0,
       amount: (t) => t * 0.05,
       color: "text-yellow-600",
+      durationMinutes: 1, // duração em minutos
     },
   ];
 
-  const appliedBonuses = bonuses.filter((b) => b.condition(total, timeLeft));
+  const [bonusTimeLeft, setBonusTimeLeft] = useState<Record<string, number>>({});
+
+  // --- Atualizar cooldown a cada segundo ---
+  useEffect(() => {
+    const stored = localStorage.getItem("bonusTimeLeft");
+    if (stored) {
+      setBonusTimeLeft(JSON.parse(stored));
+    } else {
+      const initial: Record<string, number> = {};
+      bonuses.forEach((b) => {
+        initial[b.id] = (b.durationMinutes || 10) * 60; // minutos -> segundos
+      });
+      setBonusTimeLeft(initial);
+    }
+
+    const interval = setInterval(() => {
+      setBonusTimeLeft((prev) => {
+        const updated: Record<string, number> = {};
+        for (const key in prev) {
+          updated[key] = Math.max(prev[key] - 1, 0);
+        }
+        localStorage.setItem("bonusTimeLeft", JSON.stringify(updated));
+        return updated;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const appliedBonuses = bonuses.filter((b) => b.condition(total));
   const totalBonus = appliedBonuses.reduce((acc, b) => acc + b.amount(total), 0);
   const totalWithBonus = total - totalBonus;
 
@@ -58,7 +97,7 @@ export default function MiniCart() {
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <CardTitle className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-neutral-900 dark:text-white">
               <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
-              {items.length > 0 ? `Seu Carrinho (${itemCount} itens)` : "Seu Carrinho"}
+              {items.length > 0 ? `Seu Carrinho (${items.length} itens)` : "Seu Carrinho"}
             </CardTitle>
             {items.length > 0 && (
               <Button
@@ -90,31 +129,17 @@ export default function MiniCart() {
                       className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-4"
                     >
                       <div className="flex-1">
-                        <p className="font-semibold text-neutral-900 dark:text-white">{item.nome}</p>
+                        <p className="font-semibold text-neutral-900 dark:text-white">
+                          {productNames[item.nome] || item.nome}
+                        </p>
                         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                          R$ {item.preco.toFixed(2)} cada
+                          R$ {item.preco.toFixed(2)}
                         </p>
                       </div>
 
-                      <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-4">
-                        <div className="flex items-center border border-yellow-500/40 rounded-lg overflow-hidden">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, Math.max(item.quantidade - 1, 1))}
-                            disabled={item.quantidade <= 1}
-                            className="cursor-pointer"
-                          >
-                            <Minus className="w-4 h-4" />
-                          </Button>
-                          <span className="px-3 font-medium">{item.quantidade}</span>
-                          <Button variant="ghost" size="icon" className="cursor-pointer" onClick={() => updateQuantity(item.id, item.quantidade + 1)}>
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        </div>
-
+                      <div className="flex items-center gap-4">
                         <span className="font-bold text-lg text-yellow-600 min-w-[80px] text-right">
-                          R$ {(item.preco * item.quantidade).toFixed(2)}
+                          R$ {item.preco.toFixed(2)}
                         </span>
 
                         <Button
@@ -146,7 +171,7 @@ export default function MiniCart() {
                   {/* Mensagens de bônus */}
                   {appliedBonuses.map((b) => (
                     <p key={b.id} className={`text-sm mt-2 font-semibold ${b.color || "text-yellow-600"}`}>
-                      🎉 {b.label} (-{b.amount(total).toFixed(2)} R$)
+                      🎉 {b.label} (-{b.amount(total).toFixed(2)} R$) | Tempo restante: {Math.floor(bonusTimeLeft[b.id] / 60)}m {bonusTimeLeft[b.id] % 60}s
                     </p>
                   ))}
 
