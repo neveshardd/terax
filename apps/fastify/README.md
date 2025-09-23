@@ -1,4 +1,4 @@
-# auth
+# fastify
 
 ## 🚀 Project Description
 
@@ -18,10 +18,10 @@ This repository contains a modern application built with cutting-edge technologi
 
 ```bash
 # Clone the repository
-git clone https://github.com/neveshardd/terax/tree/main/apps/auth
+git clone https://github.com/neveshardd/terax/tree/main/apps/fastify
 
 # Navigate to the project directory
-cd auth
+cd fastify
 
 # Install dependencies
 npm install
@@ -38,7 +38,7 @@ After installation, you can start using the application by running the developme
 
 ```javascript
 // Example usage
-import { Component } from './auth'
+import { Component } from './fastify'
 
 const app = new Component({
   // Configuration options
@@ -50,7 +50,7 @@ app.start()
 ## 🏗️ Project Structure
 
 ```
-auth/
+fastify/
 ├── src/
 │   ├── components/
 │   ├── utils/

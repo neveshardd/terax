@@ -1,135 +1,180 @@
-# Turborepo starter
+# Terax - A Full-Stack E-commerce Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
+[![Fastify](https://img.shields.io/badge/Fastify-000000?style=flat&logo=fastify&logoColor=white)](https://www.fastify.io/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Turborepo](https://img.shields.io/badge/Turborepo-EF4444?style=flat&logo=turborepo&logoColor=white)](https://turbo.build/repo)
 
-## Using this example
+Terax is a robust, full-stack monorepo designed for building a modern e-commerce platform. It leverages a micro-frontend architecture with distinct applications for authentication, the main store, and a dedicated backend API. The project emphasizes code reusability, maintainability, and scalability through shared packages and efficient monorepo management with Turborepo.
 
-Run the following command:
+## ✨ Features
 
-```sh
-npx create-turbo@latest
+Terax provides a comprehensive set of features for a modern e-commerce experience:
+
+*   **Comprehensive User Authentication**: Secure user registration, login, and password recovery functionalities.
+*   **E-commerce Storefront**: Intuitive product browsing with categories and detailed product pages.
+*   **Shopping Cart & Checkout**: Seamless shopping cart management and a streamlined checkout process.
+*   **Backend RESTful API**: A robust Fastify-based API for handling user data, authentication, product information, and order management.
+*   **Shared UI Components**: A dedicated UI library (`@terax/ui`) for consistent design and enhanced development speed across all frontend applications.
+*   **Standardized Development Experience**: Enforced code quality and consistency using shared ESLint and TypeScript configurations.
+*   **Efficient Monorepo Management**: Optimized build and development workflows powered by Turborepo.
+*   **Dynamic Routing**: Support for dynamic routing for product categories and individual product pages.
+*   **Informational Pages**: Dedicated pages for Terms of Service and Privacy Policy.
+*   **Database Integration**: Reliable data persistence managed via Prisma ORM.
+
+## 🚀 Getting Started
+
+Follow these instructions to set up and run the Terax project locally.
+
+### Prerequisites
+
+*   Node.js (v18 or higher recommended)
+*   npm (v8 or higher recommended) or pnpm
+*   Git
+*   A PostgreSQL or compatible database for Prisma
+
+### Installation
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/neveshardd/terax.git
+    cd terax
+    ```
+
+2.  **Install dependencies:**
+    This monorepo uses Turborepo. Install all root and workspace dependencies:
+
+    ```bash
+    npm install
+    # or if you prefer pnpm
+    # pnpm install
+    ```
+
+3.  **Database Setup:**
+    Navigate to the `apps/fastify` directory, configure your database connection string in an `.env` file (e.g., `DATABASE_URL="postgresql://user:password@localhost:5432/terax_db"`), and then run Prisma migrations to set up your database schema:
+
+    ```bash
+    cd apps/fastify
+    npx prisma migrate dev --name init
+    # You might also want to seed your database if seed scripts are available
+    # npx prisma db seed
+    cd ../.. # Go back to the root directory
+    ```
+
+4.  **Environment Variables:**
+    Each application (e.g., `apps/auth`, `apps/store`, `apps/fastify`) may require its own `.env` file for configuration (e.g., API URLs, database connection strings, authentication secrets). Refer to the respective application directories for examples or required variables.
+
+    *   For `apps/auth` and `apps/store`, you'll likely need `NEXT_PUBLIC_API_URL` pointing to your Fastify backend and `NEXT_PUBLIC_WEB_URL` for redirects.
+    *   For `apps/fastify`, you'll need `DATABASE_URL` and potentially `JWT_SECRET`.
+
+### Usage
+
+To start all applications in development mode (frontend applications and the backend API), run the following command from the project root:
+
+```bash
+npm run dev
+# or with pnpm
+# pnpm run dev
 ```
 
-## What's inside?
+This command leverages Turborepo to concurrently start:
+*   **Authentication App:** Typically available at `http://localhost:3000` (or another port if configured).
+*   **Storefront App:** Typically available at `http://localhost:3001` (or another port if configured).
+*   **Fastify Backend API:** Typically available at `http://localhost:8080` (or another port if configured).
 
-This Turborepo includes the following packages/apps:
+You can then access the e-commerce store and authentication pages in your browser.
 
-### Apps and Packages
+## 🛠️ Tech Stack
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+Terax is built using a modern and powerful tech stack:
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Languages
+*   TypeScript
+*   JavaScript
+*   SQL (via Prisma schema)
 
-### Utilities
+### Frameworks & Libraries
+*   **Frontend**:
+    *   [Next.js](https://nextjs.org/): React framework for production.
+    *   [React](https://react.dev/): A JavaScript library for building user interfaces.
+    *   [Tailwind CSS](https://tailwindcss.com/): A utility-first CSS framework.
+    *   [Shadcn/ui](https://ui.shadcn.com/): Re-usable components built with Radix UI and Tailwind CSS.
+*   **Backend**:
+    *   [Fastify](https://www.fastify.io/): A fast and low-overhead web framework for Node.js.
+*   **ORM**:
+    *   [Prisma ORM](https://www.prisma.io/): Next-generation ORM for Node.js and TypeScript.
+*   **Monorepo Management**:
+    *   [Turborepo](https://turbo.build/repo): High-performance build system for JavaScript and TypeScript monorepos.
 
-This Turborepo has some additional tools already setup for you:
+### Development Tools
+*   [ESLint](https://eslint.org/): Pluggable JavaScript linter.
+*   [Prettier](https://prettier.io/): An opinionated code formatter.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Core Dependencies
 
-### Build
+*   `fastify`: Fast and low-overhead web framework.
 
-To build all apps and packages, run the following command:
+### Development Dependencies
 
-```
-cd my-turborepo
+*   `prettier`: Code formatter.
+*   `turbo`: Turborepo monorepo manager.
+*   `typescript`: TypeScript language.
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+## 📂 Project Structure
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
+The project is organized as a monorepo, separating applications (`apps/`) and shared packages (`packages/`).
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+terax/
+├── apps/
+│   ├── auth/              # Next.js application for user authentication (login, register, forgot password)
+│   │   ├── src/
+│   │   │   ├── app/       # Next.js App Router structure
+│   │   │   └── hooks/     # Custom React hooks
+│   │   └── ...
+│   ├── fastify/           # Fastify backend API server
+│   │   ├── src/
+│   │   │   ├── routes/    # API routes (auth, users, etc.)
+│   │   │   ├── middlewares/ # Authentication middleware
+│   │   │   ├── configs/   # Server configurations (router, env, prisma)
+│   │   │   └── exceptions/ # Custom exception handling
+│   │   ├── prisma/        # Prisma schema and migrations
+│   │   └── ...
+│   └── store/             # Next.js application for the e-commerce storefront
+│       │   ├── src/
+│       │   │   ├── app/   # Next.js App Router structure (cart, checkout, product pages)
+│       │   │   ├── components/ # Store-specific components
+│       │   │   └── lib/   # Utility functions
+│       │   ├── public/    # Static assets (product images, etc.)
+│       │   └── ...
+├── packages/
+│   ├── eslint-config/     # Shared ESLint configurations for consistent code style
+│   ├── typescript-config/ # Shared TypeScript configurations
+│   └── ui/                # Shared React UI component library (e.g., button, card)
+│       │   ├── src/
+│       │   │   └── ...    # Individual UI components
+│       │   └── ...
+├── turbo.json             # Turborepo configuration for monorepo tasks
+├── package.json           # Root package.json with monorepo scripts
+└── README.md              # Project README
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🤝 Contributing
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+We welcome contributions to the Terax project! If you're interested in improving this platform, please follow these steps:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+1.  Fork the repository.
+2.  Create a new branch for your feature or bug fix.
+3.  Make your changes and ensure they adhere to the project's coding standards (run `npm run lint` and `npm run format`).
+4.  Write clear, concise commit messages.
+5.  Push your branch and open a pull request.
 
-### Remote Caching
+Please ensure your pull requests are well-described and include any relevant issue numbers.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## 📄 License
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
