@@ -5,6 +5,8 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { userMessages } from '../exceptions/user.js'
 
+const isProd = process.env.NODE_ENV === "production";
+
 routers.post('/register', async (req, res) => {
     const user = req.body
     const { name, email, password, confirmPassword } = user
@@ -90,10 +92,10 @@ routers.post('/login', async (req, res) => {
 
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            maxAge: 15 * 60 * 1000
-        })
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
+            maxAge: 15 * 60 * 1000,
+        });
 
         return res.status(200).json({
             message: userMessages.loggedIn,
@@ -112,10 +114,11 @@ routers.post('/login', async (req, res) => {
 routers.get('/logout', async (req, res) => {
     res.clearCookie("access_token", {
         httpOnly: true,
-        secure: true, 
-        sameSite: "none",
-        path: "/",   
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
+        path: "/",
     });
+
     res.status(200).json({ message: "Logout realizado com sucesso!" });
 });
 
