@@ -116,7 +116,6 @@ routers.get('/logout', async (req, res) => {
         httpOnly: true,
         secure: isProd,
         sameSite: isProd ? "none" : "lax",
-        path: "/",
     });
 
     res.status(200).json({ message: "Logout realizado com sucesso!" });
